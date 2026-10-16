@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dark Aesthetic</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #080808;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Hiệu ứng hạt bụi nền */
+        .dust-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Màn hình mở đầu */
+        #welcome-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            background: radial-gradient(circle at center, #141414 0%, #080808 100%);
+        }
+
+        #welcome-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .author-text {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: #777;
+            text-transform: lowercase;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .heart-container {
+            position: relative;
+            font-size: 75px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+            user-select: none;
+        }
+
+        .heart-container.crack-effect {
+            transform: scale(0.9);
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+        }
+
+        .tap-to-open {
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: #555;
+            text-transform: uppercase;
+            animation: pulse 2s infinite ease-in-out;
+            margin-top: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Hiệu ứng trái tim rơi */
+        .falling-heart {
+            position: absolute;
+            top: -50px;
+            color: #1a1a1a;
+            user-select: none;
+            pointer-events: none;
+            z-index: 2;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(105vh) translateX(-50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Màn hình Video */
+        #content-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease;
+            z-index: 5;
+            background-color: #080808;
+        }
+
+        #content-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .video-wrapper {
+            width: 90%;
+            max-width: 360px;
+            height: 75vh;
+            max-height: 640px;
+            background: #111;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 1px solid #222;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        iframe, video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+
+        .fallback-box {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .fallback-box p {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .tiktok-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            border: 1px solid #333;
+            transition: background 0.2s;
+        }
+
+        .tiktok-btn:hover {
+            background: #2a2a2a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dust-particles"></div>
+
+    <!-- Màn hình mở đầu -->
+    <div id="welcome-screen" onclick="openWebsite()">
+        <div class="author-text">tác phẩm ngu thích làm màu</div>
+        <div class="heart-container" id="main-heart">🖤</div>
+        <div class="tap-to-open">tap to open</div>
+    </div>
+
+    <!-- Màn hình chứa video -->
+    <div id="content-screen">
+        <div class="video-wrapper" id="video-container">
+            <!-- Khu vực nhúng video TikTok -->
+            <!-- Lưu ý: TikTok có cơ chế bảo mật nhúng chặt chẽ, hệ thống tự động hiển thị trình phát hoặc link dự phòng an toàn -->
+            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@user/video/735... " data-video-id="ZSgFAhEno" style="max-width: 605px;min-width: 325px;" > 
+                <section> 
+                    <div class="fallback-box">
+                        <p>Đang tải video TikTok...</p>
+                        <a href="https://vt.tiktok.com/ZSgFAhEno/" target="_blank" class="tiktok-btn">Mở trực tiếp trên TikTok</a>
+                    </div>
+                </section> 
+            </blockquote> 
+            <script async src="https://www.tiktok.com/embed.js"></script>
+        </div>
+    </div>
+
+    <script>
+        // Tạo hiệu ứng trái tim rơi liên tục
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            heart.innerHTML = '🖤';
+            heart.style.left = Math.random() * 100 + 'vw';
+            
+            // Kích thước ngẫu nhiên
+            const size = Math.random() * 16 + 12; // từ 12px đến 28px
+            heart.style.fontSize = size + 'px';
+            
+            // Tốc độ rơi ngẫu nhiên
+            const duration = Math.random() * 3 + 4; // từ 4s đến 7s
+            heart.style.animationDuration = duration + 's';
+            
+            // Độ mờ ngẫu nhiên
+            heart.style.opacity = Math.random() * 0.5 + 0.3;
+
+            document.body.appendChild(heart);
+
+            // Xóa phần tử sau khi rơi xong để tối ưu bộ nhớ
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        // Bắt đầu thả tim đều đặn
+        setInterval(createFallingHeart, 400);
+
+        // Xử lý sự kiện chạm mở website
+        function openWebsite() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const contentScreen = document.getElementById('content-screen');
+            const mainHeart = document.getElementById('main-heart');
+
+            // Hiệu ứng nứt vỡ/tác động nhẹ trước khi chuyển cảnh
+            mainHeart.classList.add('crack-effect');
+            mainHeart.innerHTML = '💔';
+
+            setTimeout(() => {
+                welcomeScreen.classList.add('hidden');
+                contentScreen.classList.add('active');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
