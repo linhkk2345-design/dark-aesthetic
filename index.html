@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dark Aesthetic</title>
     <style>
         * {
@@ -14,47 +14,56 @@
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #080808;
+            background-color: #0b0b0b;
             color: #e0e0e0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
-            position: relative;
         }
 
         /* Hiệu ứng hạt bụi nền */
-        .dust-particles {
-            position: absolute;
+        #particles {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
             pointer-events: none;
             z-index: 1;
         }
 
-        /* Màn hình mở đầu */
-        #welcome-screen {
+        .particle {
             position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* Màn hình mở đầu */
+        #intro-screen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: #0b0b0b;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             z-index: 10;
             cursor: pointer;
             transition: opacity 0.8s ease, visibility 0.8s ease;
-            background: radial-gradient(circle at center, #141414 0%, #080808 100%);
         }
 
-        #welcome-screen.hidden {
+        #intro-screen.hidden {
             opacity: 0;
             visibility: hidden;
-            pointer-events: none;
         }
 
         .author-text {
@@ -68,201 +77,196 @@
 
         .heart-container {
             position: relative;
-            font-size: 75px;
-            margin-bottom: 25px;
-            transition: transform 0.3s ease;
-            user-select: none;
+            margin-bottom: 35px;
         }
 
-        .heart-container.crack-effect {
-            transform: scale(0.9);
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+        .broken-heart {
+            font-size: 60px;
+            color: #1a1a1a;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            user-select: none;
         }
 
         .tap-to-open {
             font-size: 11px;
             letter-spacing: 4px;
-            color: #555;
+            color: #888;
             text-transform: uppercase;
-            animation: pulse 2s infinite ease-in-out;
-            margin-top: 10px;
+            animation: pulseText 2s infinite ease-in-out;
+            font-weight: 400;
         }
 
-        @keyframes pulse {
+        @keyframes pulseText {
             0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.8; }
+            50% { opacity: 0.9; }
         }
 
         /* Hiệu ứng trái tim rơi */
         .falling-heart {
-            position: absolute;
+            position: fixed;
             top: -50px;
-            color: #1a1a1a;
+            color: #222;
+            font-size: 20px;
             user-select: none;
             pointer-events: none;
             z-index: 2;
-            animation: fall linear forwards;
+            animation: fallHeart linear forwards;
         }
 
-        @keyframes fall {
+        @keyframes fallHeart {
             0% {
-                transform: translateY(0) translateX(0) rotate(0deg);
+                transform: translate(0, 0) rotate(0deg);
                 opacity: 0.8;
             }
             100% {
-                transform: translateY(105vh) translateX(-50px) rotate(360deg);
+                transform: translate(100vw, 105vh) rotate(360deg);
                 opacity: 0;
             }
         }
 
-        /* Màn hình Video */
-        #content-screen {
-            position: absolute;
+        /* Giao diện xem video / nội dung chính */
+        #main-screen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            background: #0b0b0b;
             opacity: 0;
             visibility: hidden;
             transition: opacity 1s ease;
             z-index: 5;
-            background-color: #080808;
         }
 
-        #content-screen.active {
+        #main-screen.active {
             opacity: 1;
             visibility: visible;
         }
 
-        .video-wrapper {
+        .content-box {
             width: 90%;
             max-width: 360px;
-            height: 75vh;
-            max-height: 640px;
-            background: #111;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            padding: 30px 20px;
+            background: #121212;
             border: 1px solid #222;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        iframe, video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border: none;
-        }
-
-        .fallback-box {
+            border-radius: 16px;
             text-align: center;
-            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
         }
 
-        .fallback-box p {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 15px;
+        .content-box h2 {
+            font-size: 15px;
+            font-weight: 400;
+            color: #ccc;
+            margin-bottom: 10px;
             letter-spacing: 1px;
         }
 
-        .tiktok-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 20px;
+        .content-box p {
             font-size: 12px;
-            letter-spacing: 1px;
-            border: 1px solid #333;
-            transition: background 0.2s;
+            color: #777;
+            margin-bottom: 25px;
+            line-height: 1.6;
         }
 
-        .tiktok-btn:hover {
-            background: #2a2a2a;
+        .btn-tiktok {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: background 0.3s, transform 0.2s;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+        }
+
+        .btn-tiktok:active {
+            transform: scale(0.98);
+        }
+
+        .btn-tiktok:hover {
+            background: #dcdcdc;
         }
     </style>
 </head>
 <body>
 
-    <div class="dust-particles"></div>
+    <!-- Hiệu ứng hạt sáng nền -->
+    <div id="particles"></div>
 
     <!-- Màn hình mở đầu -->
-    <div id="welcome-screen" onclick="openWebsite()">
+    <div id="intro-screen" onclick="openWebsite()">
         <div class="author-text">tác phẩm ngu thích làm màu</div>
-        <div class="heart-container" id="main-heart">🖤</div>
+        <div class="heart-container">
+            <div class="broken-heart">💔</div>
+        </div>
         <div class="tap-to-open">tap to open</div>
     </div>
 
-    <!-- Màn hình chứa video -->
-    <div id="content-screen">
-        <div class="video-wrapper" id="video-container">
-            <!-- Khu vực nhúng video TikTok -->
-            <!-- Lưu ý: TikTok có cơ chế bảo mật nhúng chặt chẽ, hệ thống tự động hiển thị trình phát hoặc link dự phòng an toàn -->
-            <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@user/video/735... " data-video-id="ZSgFAhEno" style="max-width: 605px;min-width: 325px;" > 
-                <section> 
-                    <div class="fallback-box">
-                        <p>Đang tải video TikTok...</p>
-                        <a href="https://vt.tiktok.com/ZSgFAhEno/" target="_blank" class="tiktok-btn">Mở trực tiếp trên TikTok</a>
-                    </div>
-                </section> 
-            </blockquote> 
-            <script async src="https://www.tiktok.com/embed.js"></script>
+    <!-- Màn hình chính -->
+    <div id="main-screen">
+        <div class="content-box">
+            <h2>TikTok Dark Aesthetic</h2>
+            <p>Nhấn vào bên dưới để thưởng thức video và âm thanh gốc trực tiếp trên TikTok.</p>
+            <a href="https://vt.tiktok.com/ZSgFAhEno/" target="_blank" class="btn-tiktok">XEM TRÊN TIKTOK 🖤</a>
         </div>
     </div>
 
     <script>
-        // Tạo hiệu ứng trái tim rơi liên tục
+        // Tạo hiệu ứng hạt bụi phía sau
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 3 + 1;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // Tạo hiệu ứng trái tim rơi liên tục ở màn hình mở đầu
         function createFallingHeart() {
+            const intro = document.getElementById('intro-screen');
+            if (intro.classList.contains('hidden')) return;
+
             const heart = document.createElement('div');
             heart.classList.add('falling-heart');
-            heart.innerHTML = '🖤';
-            heart.style.left = Math.random() * 100 + 'vw';
+            heart.innerHTML = Math.random() > 0.3 ? '🖤' : '💔';
+            heart.style.left = `${Math.random() * -20}vw`;
+            heart.style.fontSize = `${Math.floor(Math.random() * 15) + 12}px`;
             
-            // Kích thước ngẫu nhiên
-            const size = Math.random() * 16 + 12; // từ 12px đến 28px
-            heart.style.fontSize = size + 'px';
-            
-            // Tốc độ rơi ngẫu nhiên
-            const duration = Math.random() * 3 + 4; // từ 4s đến 7s
-            heart.style.animationDuration = duration + 's';
-            
-            // Độ mờ ngẫu nhiên
-            heart.style.opacity = Math.random() * 0.5 + 0.3;
+            const duration = Math.random() * 3 + 4;
+            heart.style.animationDuration = `${duration}s`;
 
             document.body.appendChild(heart);
 
-            // Xóa phần tử sau khi rơi xong để tối ưu bộ nhớ
             setTimeout(() => {
                 heart.remove();
             }, duration * 1000);
         }
 
-        // Bắt đầu thả tim đều đặn
         setInterval(createFallingHeart, 400);
 
-        // Xử lý sự kiện chạm mở website
+        // Xử lý khi người dùng chạm mở
         function openWebsite() {
-            const welcomeScreen = document.getElementById('welcome-screen');
-            const contentScreen = document.getElementById('content-screen');
-            const mainHeart = document.getElementById('main-heart');
+            const introScreen = document.getElementById('intro-screen');
+            const mainScreen = document.getElementById('main-screen');
 
-            // Hiệu ứng nứt vỡ/tác động nhẹ trước khi chuyển cảnh
-            mainHeart.classList.add('crack-effect');
-            mainHeart.innerHTML = '💔';
-
+            introScreen.classList.add('hidden');
             setTimeout(() => {
-                welcomeScreen.classList.add('hidden');
-                contentScreen.classList.add('active');
-            }, 300);
+                mainScreen.classList.add('active');
+            }, 400);
         }
     </script>
 </body>
