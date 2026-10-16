@@ -124,7 +124,7 @@
             }
         }
 
-        /* Giao diện xem video / nội dung chính */
+        /* Giao diện chính chứa video trực tiếp */
         #main-screen {
             position: fixed;
             top: 0;
@@ -147,53 +147,46 @@
             visibility: visible;
         }
 
-        .content-box {
+        .video-container {
+            position: relative;
             width: 90%;
-            max-width: 360px;
-            padding: 30px 20px;
-            background: #121212;
+            max-width: 340px;
+            height: 75vh;
+            max-height: 600px;
+            background: #000;
+            border-radius: 14px;
+            overflow: hidden;
             border: 1px solid #222;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .content-box h2 {
-            font-size: 15px;
-            font-weight: 400;
-            color: #ccc;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        .content-box p {
-            font-size: 12px;
-            color: #777;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .btn-tiktok {
-            display: block;
+        video {
             width: 100%;
-            padding: 14px;
-            background: #fff;
-            color: #000;
-            text-decoration: none;
-            font-size: 13px;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Nút bật âm thanh nằm nổi trên video */
+        .sound-btn {
+            position: absolute;
+            bottom: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            font-size: 11px;
             letter-spacing: 2px;
-            border-radius: 30px;
-            font-weight: 500;
-            transition: background 0.3s, transform 0.2s;
-            box-shadow: 0 5px 15px rgba(255,255,255,0.1);
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: background 0.3s;
         }
 
-        .btn-tiktok:active {
-            transform: scale(0.98);
-        }
-
-        .btn-tiktok:hover {
-            background: #dcdcdc;
+        .sound-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
@@ -211,17 +204,22 @@
         <div class="tap-to-open">tap to open</div>
     </div>
 
-    <!-- Màn hình chính -->
+    <!-- Màn hình chính phát video trực tiếp -->
     <div id="main-screen">
-        <div class="content-box">
-            <h2>TikTok Dark Aesthetic</h2>
-            <p>Nhấn vào bên dưới để thưởng thức video và âm thanh gốc trực tiếp trên TikTok.</p>
-            <a href="https://vt.tiktok.com/ZSgFAhEno/" target="_blank" class="btn-tiktok">XEM TRÊN TIKTOK 🖤</a>
+        <div class="video-container">
+            <!-- Thẻ phát video trực tiếp (Thay link file .mp4 của video vào thuộc tính src bên dưới) -->
+            <video id="my-video" loop playsinline autoplay muted>
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ thẻ video.
+            </video>
+            
+            <!-- Nút bật tiếng vì trình duyệt chặn tự phát có âm thanh -->
+            <button class="sound-btn" onclick="toggleSound(event)" id="soundToggle">BẬT ÂM THANH 🔊</button>
         </div>
     </div>
 
     <script>
-        // Tạo hiệu ứng hạt bụi phía sau
+        // Tạo hiệu ứng hạt bụi nền
         const particlesContainer = document.getElementById('particles');
         for (let i = 0; i < 20; i++) {
             const particle = document.createElement('div');
@@ -235,7 +233,7 @@
             particlesContainer.appendChild(particle);
         }
 
-        // Tạo hiệu ứng trái tim rơi liên tục ở màn hình mở đầu
+        // Tạo hiệu ứng trái tim rơi ở màn hình mở đầu
         function createFallingHeart() {
             const intro = document.getElementById('intro-screen');
             if (intro.classList.contains('hidden')) return;
@@ -258,15 +256,32 @@
 
         setInterval(createFallingHeart, 400);
 
-        // Xử lý khi người dùng chạm mở
+        // Xử lý khi chạm mở website
         function openWebsite() {
             const introScreen = document.getElementById('intro-screen');
             const mainScreen = document.getElementById('main-screen');
+            const video = document.getElementById('my-video');
 
             introScreen.classList.add('hidden');
             setTimeout(() => {
                 mainScreen.classList.add('active');
+                video.play().catch(e => console.log("Autoplay blocked"));
             }, 400);
+        }
+
+        // Hàm bật/tắt âm thanh khi người xem bấm nút trên web
+        function toggleSound(e) {
+            e.stopPropagation();
+            const video = document.getElementById('my-video');
+            const btn = document.getElementById('soundToggle');
+
+            if (video.muted) {
+                video.muted = false;
+                btn.innerHTML = "TẮT ÂM THANH 🔇";
+            } else {
+                video.muted = true;
+                btn.innerHTML = "BẬT ÂM THANH 🔊";
+            }
         }
     </script>
 </body>
